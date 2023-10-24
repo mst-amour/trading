@@ -7,8 +7,8 @@ rsi_length = input(14, title="RSI Length")
 overbought_threshold = input(70, title="Overbought Threshold")
 oversold_threshold = input(30, title="Oversold Threshold")
 
-// Calculate RSI
-rsi = ta.rsi(rsi_length)
+// Calculate RSI with the specified length parameter
+rsi = ta.rsi(close, rsi_length)
 
 // Create buy and sell conditions
 buy_condition = ta.crossover(rsi, oversold_threshold)
