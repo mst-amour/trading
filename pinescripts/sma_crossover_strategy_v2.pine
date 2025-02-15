@@ -1,0 +1,41 @@
+//@version=5
+strategy("SMA Crossover Strategy", overlay=true)
+// STEP 1. Create inputs that configure the backtest's date range
+
+// Define the SMA periods
+smaPeriod1 = 5
+smaPeriod2 = 8
+smaPeriod3 = 13
+
+// Calculate the SMAs
+sma1 = ta.sma(close, smaPeriod1)
+sma2 = ta.sma(close, smaPeriod2)
+sma3 = ta.sma(close, smaPeriod3)
+
+// Plot the SMAs
+plot(sma1, color=color.blue, title="SMA 5")
+plot(sma2, color=color.red, title="SMA 8")
+plot(sma3, color=color.green, title="SMA 13")
+
+// Strategy logic
+var in_position = false
+
+// Entry condition
+longCondition = ta.crossover(sma2, sma3) and sma1 > sma2 and close > sma1
+
+// Exit condition
+shortCondition = ta.crossunder(sma2, sma3) and sma1 < sma2 and close < sma1
+
+// Execute buy order
+if (longCondition and not in_position)
+    strategy.entry("Buy", strategy.long)
+    in_position := true
+
+// Execute sell order
+if (shortCondition and in_position)
+    strategy.close("Buy")
+    in_position := false
+
+// Plot buy and sell signals on the chart
+plotshape(series=longCondition and not in_position, location=location.belowbar, color=color.green, style=shape.labelup, title="Buy Signal", text="BUY")
+plotshape(series=shortCondition and in_position, location=location.abovebar, color=color.red, style=shape.labeldown, title="Sell Signal", text="SELL")
